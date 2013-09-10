@@ -4,6 +4,7 @@ BadgeMaker
 Demo in index.html
 
 Init:
+
     $('#someId').badgemaker({
       width: 512,
       height: 256,
@@ -22,9 +23,8 @@ Init:
     })
     
 API:
+
     $('#someId').badgemaker('setImage', 'some image url');
-    
     $('#someId').badgemaker('setColors', '#cccccc', '#888888');
-    
     var dataURI = $('#someId').badgemaker('getImage');
     
