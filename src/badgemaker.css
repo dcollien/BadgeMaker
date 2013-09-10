@@ -1,0 +1,33 @@
+.jq-badgemaker {
+	border: 1px solid #eee;
+	padding: 9px;
+	font-size: 12px;
+}
+
+.jq-badgemaker label {
+	margin: 0;
+	margin-left: 10px;
+	padding: 0;
+}
+
+.jq-badgemaker-tools {
+	float: left;
+	display: inline-block;
+	height: 100%;
+}
+
+.jq-badgemaker-canvas {
+	float: left;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.jq-badgemaker-slider {
+	height: 10px;
+	margin: 10px;
+}
+
+.jq-badgemaker-select {
+	width: 100%;
+	margin-bottom: 10px;
+}
