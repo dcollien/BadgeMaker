@@ -147,34 +147,33 @@ var BadgeStyles = {
     'options': {
 
       stroke: 0.02,
-      detail: [
-        function(ctx, x, y, w, h, param1, param2, param3) {
-          ctx.save();
+      detail: function(ctx, x, y, w, h, param1, param2, param3) {
+        ctx.save();
 
-          var smallRad = 0.5 - 0.05 - (0.1 * (1-param3));
+        var smallRad = 0.5 - 0.05 - (0.1 * (1-param3));
 
-          smallRad = smallRad * h;
+        smallRad = smallRad * h;
 
-          ctx.beginPath();
-          ctx.arc(x, y, smallRad * 0.9, 0, TAU);
-          ctx.lineWidth = h * 0.005;
-          ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x, y, smallRad * 0.9, 0, TAU);
+        ctx.lineWidth = h * 0.005;
+        ctx.stroke();
 
-          ctx.beginPath();
-          ctx.arc(x, y, smallRad * 0.8, 0, TAU);
-          ctx.lineWidth = h * 0.005;
-          ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x, y, smallRad * 0.8, 0, TAU);
+        ctx.lineWidth = h * 0.005;
+        ctx.stroke();
 
 
-          ctx.beginPath();
-          ctx.arc(x, y, smallRad * 0.85, 0, TAU);
-          ctx.lineWidth = h * 0.005;
-          ctx.setLineDash([2,3]);
-          ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x, y, smallRad * 0.85, 0, TAU);
+        ctx.lineWidth = h * 0.005;
+        ctx.setLineDash([2,3]);
+        ctx.stroke();
 
-          ctx.restore();
-        }
-      ]
+        ctx.restore();
+      }
+      // end detail
 
     }
   }
@@ -240,7 +239,7 @@ var TAU = Math.PI * 2;
     setImage: function(url) {
       var img = this.data('image');
       img.src = url;
-      
+
       this.badgemaker('redraw');
     },
 
@@ -378,11 +377,7 @@ var TAU = Math.PI * 2;
       var lightColor = options.lightColor;  
       var darkColor  = options.darkColor;
 
-      var param1 = params[0];
-      var param2 = params[1];
-      var param3 = params[2];
-
-      var shape = $.badgemaker.generateShape(style, param1, param2, param3);
+      var shape = $.badgemaker.generateShape.apply(null, [style].concat(params));
 
       if (styleOptions.stroke) {
         ctx.strokeStyle = lightColor;
@@ -400,9 +395,7 @@ var TAU = Math.PI * 2;
 
       if (styleOptions.detail) {
         ctx.strokeStyle = lightColor;
-        $.each(styleOptions.detail, function(i, delegate) {
-          delegate.apply(null, [ctx, posX, posY, size, size, param1, param2, param3]);
-        });
+        styleOptions.detail.apply(null, [ctx, posX, posY, size, size].concat(params));
       }
     },
 
