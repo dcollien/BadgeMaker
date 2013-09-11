@@ -28,3 +28,6 @@ API:
     $('#someId').badgemaker('setColors', '#cccccc', '#888888');
     var dataURI = $('#someId').badgemaker('getImage');
     
+
+Icons:
+http://flaticons.net/
