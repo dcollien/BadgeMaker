@@ -173,8 +173,12 @@ body {
 
   $('#save-btn').click(function() {
     var image = $('#badgemaker').badgemaker('getImage');
+    
     console.log(image);
-    alert('Image data dumped to console. Do ajax call here.');
+    // TODO: send image over AJAX to server
+    // for now, open it in a new window for saving
+    window.open(image,'image_preview','width=300,height=300,titlebar=no,status=no,toolbar=no,location=no,menubar=no');
+    $(window).focus();
   });
 
   // add images to categories
