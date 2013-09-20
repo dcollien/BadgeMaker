@@ -18,6 +18,12 @@ body {
   float: left;
 }
 
+#imageColors {
+  display: inline-block;
+  float: left;
+  margin-left: 4px;
+}
+
 .color-choice {
   cursor: pointer;
   width: 50px;
@@ -106,6 +112,7 @@ body {
 <div class="widget">
   <div id="badgemaker"></div>
   <div id="colors"></div>
+  <div id="imageColors"></div>
   <div id="saving">
     <button id="save-btn" class="button">Save</button>
   </div>
@@ -226,6 +233,12 @@ body {
         })
     );
   });
+
+  $('#imageColors').append(
+    $('<input type="color" value="#FFFFFF">').change(function() {
+      $('#badgemaker').badgemaker('setImageColor', $(this).val());
+    })
+  );
 </script>
 
 </body>

@@ -188,13 +188,21 @@ var TAU = Math.PI * 2;
       var ctx;
       var $tools = $('<div>').addClass('jq-badgemaker-tools');
       var $canvas = $('<canvas>').addClass('jq-badgemaker-canvas');
+      var $loader = $('<img>').attr('src', options.loaderImg).css({
+        position: 'absolute',
+        left: (options.height/2 - options.loaderWidth/2) + 'px',
+        top: (options.height/2 - options.loaderHeight/2) + 'px',
+      }).hide();
+
       var img = new Image();
 
-      this 
+      this
+        .css('position', 'relative')
         .addClass("jq-badgemaker")
         .width(options.width)
         .height(options.height)
         .append($canvas)
+        .append($loader)
         .append($tools);
 
       $canvas.attr('width', options.height).width(options.height);
@@ -215,6 +223,7 @@ var TAU = Math.PI * 2;
       this.data('image', img);
       this.data('tools', $tools);
       this.data('options', options);
+      this.data('loader', $loader);
 
       var style = options.style;
       var size = options.height;
@@ -228,25 +237,34 @@ var TAU = Math.PI * 2;
 
       var elt = this;
       img.onload = function() {
+        $loader.hide();
         $.badgemaker.redraw(elt);
       };
 
+      $loader.show();
       img.src = 'placeholder.png';
 
       $.badgemaker.buildTools(this, style);
     },
 
     setImage: function(url) {
+      this.data('loader').show();
+      this.badgemaker('redraw', this, true);      
+
       var img = this.data('image');
       img.src = url;
-
-      this.badgemaker('redraw');
     },
 
     setColors: function(lightColor, darkColor) {
       var options = this.data('options');
       options.lightColor = lightColor;
       options.darkColor = darkColor;
+      this.badgemaker('redraw');
+    },
+
+    setImageColor: function(color) {
+      var options = this.data('options');
+      options.imageColor = color;
       this.badgemaker('redraw');
     },
 
@@ -259,7 +277,7 @@ var TAU = Math.PI * 2;
       return this.data('canvas').toDataURL("image/png");
     },
 
-    redraw: function(elt) {
+    redraw: function(elt, skipImage) {
       if (!elt) {
         elt = this;
       }
@@ -275,7 +293,10 @@ var TAU = Math.PI * 2;
 
       ctx.clearRect(0, 0, size, size);
       $.badgemaker.drawBadge(options, ctx, style, size/2, size/2, size, params);
-      $.badgemaker.drawImage(ctx, img, size/2, size/2, imgScale);
+
+      if (!skipImage) {
+        $.badgemaker.drawImage(ctx, img, size/2, size/2, imgScale, options.imageColor);
+      }
 
       options.change && options.change.call(elt);
     },
@@ -360,14 +381,32 @@ var TAU = Math.PI * 2;
 
     },
 
-    drawImage: function(ctx, img, posX, posY, imgScale) {
+    drawImage: function(ctx, img, posX, posY, imgScale, color) {
+      var buffer, bx;
+
+      if (!color) {
+        color = '#FFFFFF';
+      }
+
+      buffer = document.createElement('canvas');
+      buffer.width = img.width;
+      buffer.height = img.height;
+      bx = buffer.getContext('2d');
+
+      bx.fillStyle = color;
+      bx.fillRect(0, 0, buffer.width, buffer.height);
+
+      bx.globalCompositeOperation = "destination-atop";
+      bx.drawImage(img, 0, 0);
+
       ctx.save();
+
       ctx.globalCompositeOperation = 'source-atop';
 
       ctx.translate(posX, posY);
       ctx.scale(imgScale, imgScale);
-      ctx.drawImage(img, -img.width/2, -img.height/2, img.width, img.height);
-    
+      ctx.drawImage(buffer, -buffer.width/2, -buffer.height/2, buffer.width, buffer.height);
+
       ctx.restore();
     },
 
@@ -499,6 +538,9 @@ var TAU = Math.PI * 2;
   $.fn.badgemaker = function() {
     var action, args;
     var options = {
+      loaderImg: 'loader.gif',
+      loaderWidth: 48,
+      loaderHeight: 64,
       width: 512,
       height: 256,
       lightColor: '#ccccff',
