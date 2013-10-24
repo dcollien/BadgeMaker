@@ -319,8 +319,8 @@ var TAU = Math.PI * 2;
       $tools.empty();
 
       var $styleMenu = $('<select>').addClass('jq-badgemaker-select');
-
-      $.each($.badgemaker.badgeStyles, function(title, styleObj) {
+      var numStyles = 0;
+      $.each(options.badgeStyles, function(title, styleObj) {
         var $opt = $('<option>').text(title);
         $styleMenu.append(
           $opt
@@ -329,6 +329,8 @@ var TAU = Math.PI * 2;
         if (title === style) {
           $opt.attr('selected', 'selected');
         }
+
+        numStyles++;
       });
 
       $styleMenu.on('change', function() {
@@ -338,9 +340,12 @@ var TAU = Math.PI * 2;
         $.badgemaker.buildTools(elt);
       });
 
-      $tools.append($styleMenu);
 
-      var params = $.badgemaker.badgeStyles[style].parameters;
+      if (numStyles > 1) {
+        $tools.append($styleMenu);
+      }
+
+      var params = options.badgeStyles[style].parameters;
 
       $.each(params, function(i, param) {
         $tools.append($('<label>').text(param));
@@ -411,12 +416,13 @@ var TAU = Math.PI * 2;
     },
 
     drawBadge: function(options, ctx, style, posX, posY, size, params) {
-      var styleOptions = $.badgemaker.badgeStyles[style].options;
+      var badgeStyle = options.badgeStyles[style];
+      var styleOptions = badgeStyle.options;
 
       var lightColor = options.lightColor;  
       var darkColor  = options.darkColor;
 
-      var shape = $.badgemaker.generateShape.apply(null, [style].concat(params));
+      var shape = $.badgemaker.generateShape.apply(null, [badgeStyle].concat(params));
 
       if (styleOptions.stroke) {
         ctx.strokeStyle = lightColor;
@@ -438,9 +444,7 @@ var TAU = Math.PI * 2;
       }
     },
 
-    badgeStyles: BadgeStyles,
-
-    generateShape: function(style, p1, p2, p3) {
+    generateShape: function(badgeStyle, p1, p2, p3) {
       var shape = [];
 
       var context = {
@@ -455,7 +459,7 @@ var TAU = Math.PI * 2;
         }
       };
 
-      $.badgemaker.badgeStyles[style].shape.call(context, p1, p2, p3);
+      badgeStyle.shape.call(context, p1, p2, p3);
 
       var mirror = shape.slice(0).reverse();
 
@@ -549,6 +553,7 @@ var TAU = Math.PI * 2;
 
       },
       style: 'Shield',
+      badgeStyles: BadgeStyles,
       params: [0.5, 0.5, 0.5],
       scale: 0.5,
       showTools: true
