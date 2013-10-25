@@ -242,17 +242,21 @@ var TAU = Math.PI * 2;
       };
 
       $loader.show();
-      img.src = 'placeholder.png';
+      img.src = options.placeholderImg;
 
       $.badgemaker.buildTools(this, style);
     },
 
     setImage: function(url) {
-      this.data('loader').show();
       this.badgemaker('redraw', this, true);      
 
       var img = this.data('image');
       img.src = url;
+      if (img.complete) {
+        this.badgemaker('redraw', this);
+      } else {
+        this.data('loader').show();
+      }
     },
 
     setColors: function(lightColor, darkColor) {
@@ -543,6 +547,7 @@ var TAU = Math.PI * 2;
     var action, args;
     var options = {
       loaderImg: 'loader.gif',
+      placeholderImg: 'placeholder.png',
       loaderWidth: 48,
       loaderHeight: 64,
       width: 512,
