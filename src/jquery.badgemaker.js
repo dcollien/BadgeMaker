@@ -239,11 +239,17 @@ var TAU = Math.PI * 2;
       img.onload = function() {
         $loader.hide();
         $.badgemaker.redraw(elt);
+
+
+        $tools.find('.jq-badgemaker-slider').slider('option', 'disabled', false);
+        if (options.onLoad) {
+          options.onLoad();
+        }
       };
 
       $loader.show();
       img.src = options.placeholderImg;
-
+      
       $.badgemaker.buildTools(this, style);
     },
 
@@ -256,6 +262,10 @@ var TAU = Math.PI * 2;
         this.badgemaker('redraw', this);
       } else {
         this.data('loader').show();
+        this.find('.jq-badgemaker-slider').slider('option', 'disabled', true);
+        if (this.data('options').onLoadStart) {
+          this.data('options').onLoadStart();
+        }
       }
     },
 
@@ -554,6 +564,12 @@ var TAU = Math.PI * 2;
       height: 256,
       lightColor: '#ccccff',
       darkColor: '#8888ff',
+      onLoadStart: function() {
+
+      },
+      onLoad: function() {
+
+      },
       click: function() {
 
       },

@@ -1,244 +1,43 @@
 <!DOCTYPE html>
 <html>
 <body>
-<link rel="stylesheet" type="text/css" href="src/badgemaker.css">
+<link rel="stylesheet" type="text/css" href="src/badgeMaker.css">
+<link rel="stylesheet" type="text/css" href="src/badgeEditor.css">
 <link rel="stylesheet" type="text/css" href="lib/ui-lightness/jquery-ui-1.10.3.custom.min.css">
 <style>
 body {
   font-family: sans-serif;
 }
 
-#badgemaker {
-  display: inline-block;
-  float: left;
-}
-
-#colors {
-  display: inline-block;
-  float: left;
-}
-
-#imageColors {
-  display: inline-block;
-  float: left;
-  margin-left: 4px;
-}
-
-.color-choice {
-  cursor: pointer;
-  width: 50px;
-  height: 25px;
-}
-
-.color-swatch {
-  display: inline-block;
-  width: 25px;
-  height: 25px;
-}
-
-.widget {
-  background-color: white;
-  width: 100%;
-}
-
-#images {
-  height: 320px;
-  overflow: auto;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  color: white;
-}
-
-#images ul li {
-  margin: 0;
-  padding: 0;
-  display: inline-block;
-}
-
-#images span {
-  padding-left: 10px;
-  font-size: 18px;
-}
-
-#images img {
-  width: 32px;
-  height: 32px;
-  padding: 6px;
-}
-
-.arrow_box {
-  position: relative;
-  background: #434A54;
-  border: 8px solid #656D78;
-  padding: 8px;
-}
-.arrow_box:after, .arrow_box:before {
-  bottom: 100%;
-  border: solid transparent;
-  content: " ";
-  height: 0;
-  width: 0;
-  position: absolute;
-  pointer-events: none;
-}
-
-.arrow_box:after {
-  border-color: rgba(67, 74, 84, 0);
-  border-bottom-color: #434A54;
-  border-width: 32px;
-  left: 130px;
-  margin-left: -32px;
-}
-.arrow_box:before {
-  border-color: rgba(101, 109, 120, 0);
-  border-bottom-color: #656D78;
-  border-width: 43px;
-  left: 130px;
-  margin-left: -43px;
-}
-
-#saving button {
-  width: 240px;
-  height: 64px;
-  float: right;
-  margin: 32px;
-  font-size: 24px;
-  cursor: pointer;
-}
 
 </style>
 
-<div class="widget">
-  <div id="badgemaker"></div>
-  <div id="colors"></div>
-  <div id="imageColors"></div>
-  <div id="saving">
-    <button id="save-btn" class="button">Save</button>
-  </div>
-</div>
+<div id="widget"></div>
 
-<div style="clear:both;"></div>
-
-<div id="images-popover" class="arrow_box" style="display:none;">
-  <div id="images">
-  </div>
-</div>
 <!-- dependencies -->
 
 <!-- jquery -->
 <script src="lib/jquery-1.10.2.min.js"></script>
 <!-- ui-slider -->
 <script src="lib/jquery-ui-1.10.3.custom.min.js"></script>
+<!-- makePlugin -->
+<script src="lib/jQuery.makePlugin.js"></script>
 
-<script src="images/images.js"></script>
+<!-- image repository -->
+<script src="badge-images/images/images.js"></script>
 
-<script src="src/jquery.badgemaker.js"></script>
+<!-- badge maker core -->
+<script src="src/jQuery.badgeMaker.js"></script>
+<!-- editor UI -->
+<script src="src/jQuery.badgeEditor.js"></script>
+
 <script>
-  function shadeColor(color, percent) {   
-    var num = parseInt(color.slice(1),16), amt = Math.round(2.55 * percent), R = (num >> 16) + amt, B = (num >> 8 & 0x00FF) + amt, G = (num & 0x0000FF) + amt;
-    return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (B<255?B<1?0:B:255)*0x100 + (G<255?G<1?0:G:255)).toString(16).slice(1);
-  };
-
-  // A colour palette to choose from
-
-  var ColorPalette = [
-    ['#ED5565', '#DA4453'],
-    ['#FC6E51', '#E9573F'],
-    ['#FFCE54', '#F6BB42'],
-    ['#A0D468', '#8CC152'],
-    ['#48CFAD', '#37BC9B'],
-    ['#4FC1E9', '#3BAFDA'],
-    ['#5D9CEC', '#4A89DC'],
-    ['#AC92EC', '#967ADC'],
-    ['#EC87C0', '#D770AD'],
-    ['#CCD1D9', '#AAB2BD'],
-    ['#656D78', '#434A54']
-  ];
-
-  // lighten the light colors a bit more (8%)
-  $.each(ColorPalette, function(i, colors) {
-    colors[0] = shadeColor(colors[0], 8);
-  });
-
-  // create the badge maker
-  $('#badgemaker').badgemaker({
-    lightColor: ColorPalette[6][0],
-    darkColor: ColorPalette[6][1],
-    change: function() {
-      console && console.log('changed');
-    },
-    click: function() {
-      $('#images-popover').toggle();
-    }
-  }).mousedown(function(evt) {
-    if (!$(evt.target).is('canvas')) {
-      $('#images-popover').hide();
-    }
-  });
-
-
-  $('#save-btn').click(function() {
-    var image = $('#badgemaker').badgemaker('getImage');
-    
-    console.log(image);
-    // TODO: send image over AJAX to server
-    // for now, open it in a new window for saving
-    window.open(image,'image_preview','width=300,height=300,titlebar=no,status=no,toolbar=no,location=no,menubar=no');
-    $(window).focus();
-  });
-
-  // add images to categories
-  var lastCategory;
-  $.each(ImageRepo.reverse(), function(i, path) {
-    var category = path.split(/\//g)[0];
-
-    if (category !== lastCategory) {    
-      $('#images').append(
-        $('<span>').text(category)
-      ).append($('<ul>')); 
-    }
-
-    lastCategory = category;
-
-    // add to chooser
-    $('#images ul').last().append(
-      $('<li>').append($('<img>')
-        .attr('src', 'thumbnails/' + path)
-        .click(function() {
-          $('#badgemaker').badgemaker('setImage', $(this).attr('src').replace('thumbnails', 'images'));
-        })
-        .css('cursor', 'pointer')
-      )
-    );
-  });
-
-  // draw the color palette
-  $.each(ColorPalette, function(i, colors) {
-    $('#colors').append(
-      $('<div>')
-        .addClass('color-choice')
-        .append(
-          $('<div>')
-            .addClass('color-swatch')
-            .css('background-color', colors[0])
-        )
-        .append(
-          $('<div>')
-            .addClass('color-swatch')
-            .css('background-color', colors[1])
-        )
-        .click(function() {
-          $('#badgemaker').badgemaker('setColors', colors[0], colors[1])
-        })
-    );
-  });
-
-  $('#imageColors').append(
-    $('<input type="color" value="#FFFFFF">').change(function() {
-      $('#badgemaker').badgemaker('setImageColor', $(this).val());
-    })
-  );
+$('#widget').badgeEditor({
+  badgeImagePath: 'badge-images/',
+  click: function() {
+    console && console.log('clicked');
+  }
+});
 </script>
 
 </body>

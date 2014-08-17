@@ -1,0 +1,84 @@
+
+.badgeEditor {
+	display: inline-block;
+}
+
+.badgeEditor-colors {
+	display: inline-block;
+	margin: 4px;
+}
+
+.color-choice {
+	display: inline-block;
+	cursor: pointer;
+	width: 25px;
+	height: 50px;
+}
+
+.color-swatch {
+	width: 25px;
+	height: 25px;
+}
+
+.badgeEditor-images {
+	height: 320px;
+	overflow: auto;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	color: white;
+}
+
+
+.badgeEditor-images ul li {
+	margin: 0;
+	padding: 0;
+	display: inline-block;
+}
+
+.badgeEditor-images span {
+	padding-left: 10px;
+	font-size: 18px;
+}
+
+.badgeEditor-images img {
+	width: 32px;
+	height: 32px;
+	padding: 6px;
+}
+
+.badgeEditor-images-popover {
+	position: relative;
+	top: -32px;
+}
+
+.badgeEditor-images-popover {
+	position: relative;
+	background: #434A54;
+	border: 8px solid #656D78;
+	padding: 8px;
+}
+.badgeEditor-images-popover:after, .badgeEditor-images-popover:before {
+	bottom: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.badgeEditor-images-popover:after {
+	border-color: rgba(67, 74, 84, 0);
+	border-bottom-color: #434A54;
+	border-width: 32px;
+	left: 130px;
+	margin-left: -32px;
+}
+.badgeEditor-images-popover:before {
+	border-color: rgba(101, 109, 120, 0);
+	border-bottom-color: #656D78;
+	border-width: 43px;
+	left: 130px;
+	margin-left: -43px;
+}
